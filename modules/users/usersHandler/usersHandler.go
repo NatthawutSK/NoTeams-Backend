@@ -2,6 +2,7 @@ package usersHandler
 
 import (
 	"strings"
+	"time"
 
 	"github.com/NatthawutSK/NoTeams-Backend/config"
 	"github.com/NatthawutSK/NoTeams-Backend/entities"
@@ -58,6 +59,18 @@ func (h *usersHandler) SignIn(c *fiber.Ctx) error {
 			err.Error(),
 		).Res()
 	}
+
+	c.Cookie(&fiber.Cookie{
+		Name:    "access_token",
+		Value:   result.Token.AccessToken,
+		Expires: time.Now().Add(24 * time.Hour),
+	})
+
+	c.Cookie(&fiber.Cookie{
+		Name:    "refresh_token",
+		Value:   result.Token.RefreshToken,
+		Expires: time.Now().Add(168 * time.Hour),
+	})
 
 	return entities.NewResponse(c).Success(fiber.StatusOK, result).Res()
 }

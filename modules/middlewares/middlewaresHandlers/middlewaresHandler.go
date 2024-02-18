@@ -1,8 +1,6 @@
 package middlewaresHandlers
 
 import (
-	"strings"
-
 	"github.com/NatthawutSK/NoTeams-Backend/config"
 	"github.com/NatthawutSK/NoTeams-Backend/entities"
 	"github.com/NatthawutSK/NoTeams-Backend/modules/middlewares/middlewaresUsecases"
@@ -45,11 +43,11 @@ func MiddlewaresHandler(cfg config.IConfig, middlewaresUsecase middlewaresUsecas
 func (h *middlewaresHandler) Cors() fiber.Handler {
 	return cors.New(cors.Config{
 		Next:             cors.ConfigDefault.Next,
-		AllowOrigins:     "*",
+		AllowOrigins:     "http://localhost:3005",
 		AllowMethods:     "GET,POST,HEAD,PUT,DELETE,PATCH",
-		AllowHeaders:     "",
-		AllowCredentials: false,
-		ExposeHeaders:    "",
+		AllowHeaders:     "Origin, Content-Type, Accept",
+		AllowCredentials: true,
+		ExposeHeaders:    "Cookie,Set-Cookie",
 		MaxAge:           0,
 	})
 }
@@ -75,7 +73,7 @@ func (h *middlewaresHandler) Logger() fiber.Handler {
 // แกะ token และตรวจสอบว่า Login อยู่หรือไม่
 func (h *middlewaresHandler) JwtAuth() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		token := strings.TrimPrefix(c.Get("Authorization"), "Bearer ")
+		token := c.Cookies("access_token")
 		result, err := auth.ParseToken(h.cfg.Jwt(), token)
 		if err != nil {
 			return entities.NewResponse(c).Error(
