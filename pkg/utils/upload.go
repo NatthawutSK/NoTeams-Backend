@@ -64,9 +64,10 @@ func (u *upload) UploadFiles(filesReq []*multipart.FileHeader, isDownload bool, 
 			filename = fmt.Sprintf("%s/%s", folder, filename)
 		}
 		fileUp := &files.FileReq{
-			FileName:    filename,
-			Files:       file,
-			ContentType: contentType,
+			FileName:       filename,
+			Files:          file,
+			ContentType:    contentType,
+			OriginFilename: file.Filename,
 		}
 
 		filesUpload = append(filesUpload, fileUp)
@@ -123,7 +124,7 @@ func (u *upload) uploadWorkers(s3Client *s3.Client, jobs <-chan *files.FileReq, 
 		}
 
 		newFile := &files.FileRes{
-			FileName: job.FileName,
+			FileName: job.OriginFilename,
 			Url:      fmt.Sprintf("https://%s.s3.amazonaws.com/%s", u.cfg.S3().S3Bucket(), job.FileName),
 		}
 
