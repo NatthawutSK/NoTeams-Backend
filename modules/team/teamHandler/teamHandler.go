@@ -25,6 +25,7 @@ const (
 	updateProfileTeamErr teamHandlerErrorCode = "team-010"
 	updatePermissionErr  teamHandlerErrorCode = "team-011"
 	updateCodeTeamErr    teamHandlerErrorCode = "team-012"
+	deleteTeamErr        teamHandlerErrorCode = "team-013"
 )
 
 type ITeamHandler interface {
@@ -40,6 +41,7 @@ type ITeamHandler interface {
 	UpdateProfileTeam(c *fiber.Ctx) error
 	UpdatePermissionTeam(c *fiber.Ctx) error
 	UpdateCodeTeam(c *fiber.Ctx) error
+	DeleteTeam(c *fiber.Ctx) error
 }
 
 type teamHandler struct {
@@ -381,4 +383,27 @@ func (h *teamHandler) UpdateCodeTeam(c *fiber.Ctx) error {
 	}
 
 	return entities.NewResponse(c).Success(fiber.StatusOK, "update code team success").Res()
+}
+
+func (h *teamHandler) DeleteTeam(c *fiber.Ctx) error {
+	teamId := strings.TrimSpace(c.Params("team_id"))
+
+	role := c.Locals("role").(string)
+	if role != "OWNER" {
+		return entities.NewResponse(c).Error(
+			fiber.ErrUnauthorized.Code,
+			string(deleteTeamErr),
+			"no permission to delete team",
+		).Res()
+	}
+
+	if err := h.teamUsecase.DeleteTeam(teamId); err != nil {
+		return entities.NewResponse(c).Error(
+			fiber.ErrBadRequest.Code,
+			string(deleteTeamErr),
+			err.Error(),
+		).Res()
+	}
+
+	return entities.NewResponse(c).Success(fiber.StatusOK, "delete team success").Res()
 }
