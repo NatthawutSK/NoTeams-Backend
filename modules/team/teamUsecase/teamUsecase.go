@@ -24,6 +24,7 @@ type ITeamUsecase interface {
 	UpdatePermission(teamId string, req *team.UpdatePermissionReq) error
 	UpdateCodeTeam(teamId string, req *team.UpdateCodeTeamReq) error
 	DeleteTeam(teamId string) error
+	ExitTeam(userId, teamId string) error
 }
 
 type teamUsecase struct {
@@ -177,6 +178,15 @@ func (u *teamUsecase) UpdateCodeTeam(teamId string, req *team.UpdateCodeTeamReq)
 func (u *teamUsecase) DeleteTeam(teamId string) error {
 	//delete team
 	err := u.teamRepo.DeleteTeam(teamId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (u *teamUsecase) ExitTeam(userId, teamId string) error {
+	//exit team
+	err := u.teamRepo.ExitTeam(userId, teamId)
 	if err != nil {
 		return err
 	}

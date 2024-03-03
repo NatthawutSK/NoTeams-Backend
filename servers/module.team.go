@@ -51,6 +51,7 @@ func (m *teamModule) Init() {
 	router.Put("/permission/:team_id", m.mid.JwtAuth(), m.mid.AuthTeam(), m.handler.UpdatePermissionTeam)
 	router.Put("/code/:team_id", m.mid.JwtAuth(), m.mid.AuthTeam(), m.handler.UpdateCodeTeam)
 	router.Delete("/:team_id", m.mid.JwtAuth(), m.mid.AuthTeam(), m.handler.DeleteTeam)
+	router.Delete("/exit/:team_id", m.mid.JwtAuth(), m.mid.AuthTeam(), m.handler.ExitTeam)
 
 }
 

@@ -26,6 +26,7 @@ const (
 	updatePermissionErr  teamHandlerErrorCode = "team-011"
 	updateCodeTeamErr    teamHandlerErrorCode = "team-012"
 	deleteTeamErr        teamHandlerErrorCode = "team-013"
+	exitTeamErr          teamHandlerErrorCode = "team-014"
 )
 
 type ITeamHandler interface {
@@ -42,6 +43,7 @@ type ITeamHandler interface {
 	UpdatePermissionTeam(c *fiber.Ctx) error
 	UpdateCodeTeam(c *fiber.Ctx) error
 	DeleteTeam(c *fiber.Ctx) error
+	ExitTeam(c *fiber.Ctx) error
 }
 
 type teamHandler struct {
@@ -406,4 +408,28 @@ func (h *teamHandler) DeleteTeam(c *fiber.Ctx) error {
 	}
 
 	return entities.NewResponse(c).Success(fiber.StatusOK, "delete team success").Res()
+}
+
+func (h *teamHandler) ExitTeam(c *fiber.Ctx) error {
+	teamId := strings.TrimSpace(c.Params("team_id"))
+	userId := c.Locals("userId").(string)
+
+	role := c.Locals("role").(string)
+	if role != "MEMBER" {
+		return entities.NewResponse(c).Error(
+			fiber.ErrUnauthorized.Code,
+			string(deleteTeamErr),
+			"owner can not exit team",
+		).Res()
+	}
+
+	if err := h.teamUsecase.ExitTeam(userId, teamId); err != nil {
+		return entities.NewResponse(c).Error(
+			fiber.ErrBadRequest.Code,
+			string(exitTeamErr),
+			err.Error(),
+		).Res()
+	}
+
+	return entities.NewResponse(c).Success(fiber.StatusOK, "exit team success").Res()
 }
