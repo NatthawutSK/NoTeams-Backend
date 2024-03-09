@@ -1,4 +1,4 @@
-DB_URL_PROD=postgres://noteams:njDcP7FR2YEy3yFk@noteams-prod.c1qaumiuo6j0.us-east-1.rds.amazonaws.com:5432/noteams_db?sslmode=disable
+DB_URL_PROD=
 DB_URL_DEV=postgres://ri:123456@localhost:4444/noteams_db_dev?sslmode=disable
 PATH_MIGRATE ?= pkg/databases/migrations
 TAG ?= v1
@@ -52,5 +52,3 @@ docker_run:
 	docker run -d -p 3000:3000 noteams-backend:$(TAG)
 
 .PHONY: init_db into_db create_db drop_db db run_db migrate_up migrate_down dev prod into_db_prod clone_git build docker_run migrate_up_prod migrate_down_prod
-# git clone https://NatthawutSK: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@github.com/NatthawutSK/NoTeams-Backend.git
-# https://github.com/NatthawutSK/NoTeams-Backend.git
