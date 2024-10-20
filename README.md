@@ -15,6 +15,8 @@ This is a web-based project management tool that allows users to create teams, m
 - Golang (GoFiber)
 - AWS Service such as EC2, AWS S3, RDS
 
+### Frontend
+[Link Repo](https://github.com/SanpichAuXD/noteams)
 
 ## Demo
 https://github.com/SanpichAuXD/noteams/assets/67864773/d1c85123-19ed-45ba-a2e8-40c72708ddf1
